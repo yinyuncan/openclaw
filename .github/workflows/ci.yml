@@ -4,6 +4,12 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+    inputs:
+      run_android:
+        description: 'Run Android build'
+        required: false
+        default: 'true'
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -511,7 +517,7 @@ jobs:
             if swift build --package-path apps/macos --configuration release; then
               exit 0
             fi
-            echo "swift build failed (attempt $attempt/3). Retryingâ€?
+            echo "swift build failed (attempt $attempt/3). Retryingï¿½?
             sleep $((attempt * 20))
           done
           exit 1
@@ -523,7 +529,7 @@ jobs:
             if swift test --package-path apps/macos --parallel --enable-code-coverage --show-codecov-path; then
               exit 0
             fi
-            echo "swift test failed (attempt $attempt/3). Retryingâ€?
+            echo "swift test failed (attempt $attempt/3). Retryingï¿½?
             sleep $((attempt * 20))
           done
           exit 1
