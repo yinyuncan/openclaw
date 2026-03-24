@@ -1,4 +1,4 @@
-name: Build Android APK
+﻿name: Build Android APK
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ jobs:
   build-debug:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,18 +35,20 @@ jobs:
       - name: Install Android SDK packages
         run: |
           yes | sdkmanager --sdk_root="${ANDROID_SDK_ROOT}" --licenses >/dev/null 2>&1
-          sdkmanager --sdk_root="${ANDROID_SDK_ROOT}" --install \
-            "platform-tools" \
-            "platforms;android-34" \
-            "build-tools;34.0.0"
+          sdkmanager --sdk_root="${ANDROID_SDK_ROOT}" --install 
+            "platform-tools" 
+            "platforms;android-36" 
+            "build-tools;36.0.0"
 
-      - name: Build Debug APK
+      - name: Build Debug APKs
         working-directory: apps/android
-        run: ./gradlew --no-daemon assembleDebug
+        run: |
+          ./gradlew --no-daemon :app:assemblePlayDebug :app:assembleThirdPartyDebug
+          ls -la app/build/outputs/apk/*/debug/*.apk
 
-      - name: Upload APK
+      - name: Upload APKs
         uses: actions/upload-artifact@v4
         with:
-          name: openclaw-debug-apk
-          path: apps/android/app/build/outputs/apk/debug/*.apk
+          name: openclaw-debug-apks
+          path: apps/android/app/build/outputs/apk/**/*.apk
           retention-days: 1
